@@ -60,7 +60,7 @@ namespace DotNetPoly
                                     System.Diagnostics.Debug.WriteLine($"field {contextName} has unknown action {xmlfield.Attributes.GetNamedItem("action")?.InnerText}");
                             }
 
-                            FieldCol.Add(contextName, new Fields.ChanceField(contextName, actions, contextCash));
+                            FieldCol.Add(contextName, new Fields.ChanceField(contextName, actions[0], contextCash));
                             break;
                         }
 

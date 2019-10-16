@@ -103,6 +103,7 @@ namespace DotNetPoly
             {
                 Buy(pPlayer, Cost);
             }
+
             [System.Obsolete()]
             internal void Buy(Player pPlayer, uint pCost)
             {
