@@ -34,6 +34,8 @@ Public Class StreetField
             If Me.Owner.Equals(Player.NoPlayer) Then
                 Dim e As New ComponentModel.CancelEventArgs
                 pPlayer.onBuyOffer(Me)
+
+                RaiseEvent FieldSold(Me, pPlayer, New EventArgs)
             Else
                 pPlayer.onPayRent(Me)
             End If
@@ -41,5 +43,7 @@ Public Class StreetField
             ' Eigenes Feld
         End If
     End Sub
+
+    Public Event FieldSold(pField As GameField, pPlayer As Player, e As EventArgs)
 	
 End Class

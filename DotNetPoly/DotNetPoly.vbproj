@@ -4,8 +4,8 @@
     <ProjectGuid>{830640AC-B3E0-41CF-A20B-6E2A27B8D08F}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <OutputType>Exe</OutputType>
-    <MyType>Console</MyType>
+    <OutputType>Library</OutputType>
+    <MyType>Windows</MyType>
     <RootNamespace>DotNetPoly</RootNamespace>
     <AssemblyName>DotNetPoly</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
@@ -45,27 +45,36 @@
     <Optimize>True</Optimize>
     <DefineConstants>TRACE=1</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions.vb" />
     <Compile Include="Fields\GameField.vb" />
     <Compile Include="Fields\StartField.vb" />
     <Compile Include="Fields\StreetField.vb" />
-    <Compile Include="iBoardAssignment.vb" />
+    <Compile Include="GameStatistics.vb" />
     <Compile Include="GameBoard.vb" />
     <Compile Include="Player.vb" />
-    <Compile Include="Program.vb" />
+    <Compile Include="PlayerAI.vb" />
     <Compile Include="Properties\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="System" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Fields" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
