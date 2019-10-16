@@ -1,49 +1,36 @@
-﻿'
-' Created by SharpDevelop.
-' User: serpe
-' Date: 22.11.2015
-' Time: 12:38
-' 
-'
+﻿Imports DotNetPoly
+
 Public Class StreetField
-	Inherits GameField
-	
-    Private ReadOnly _cost As UInteger
-    Public ReadOnly Property Cost As UInteger
-        Get
-            Return _cost
-        End Get
-    End Property
-	
-    Private ReadOnly _rent As UInteger
-    Public ReadOnly Property Rent As UInteger
-        Get
-            Return _rent
-        End Get
-    End Property
+    Inherits Field
 
-    Public Sub New(pName As String, pCost As UInteger, pEarn As UInteger)
+    Sub New(pName As String, pCost As Integer)
         MyBase.New(pName)
-        Me._cost = pCost
-        Me._rent = pEarn
+        Cost = pCost
+        Rent = pCost
     End Sub
 
-    Public Overrides Sub MoveOn(pPlayer As Player)
-        MyBase.MoveOn(pPlayer)
-        If Not Me.Owner.Equals(pPlayer) Then
-            If Me.Owner.Equals(Player.NoPlayer) Then
-                Dim e As New ComponentModel.CancelEventArgs
-                pPlayer.onBuyOffer(Me)
+    ReadOnly Property Cost As Integer
+    ReadOnly Property Rent As Integer
 
-                RaiseEvent FieldSold(Me, pPlayer, New EventArgs)
-            Else
-                pPlayer.onPayRent(Me)
-            End If
+
+    Friend Sub BuyField(pPlayer As Player)
+        pPlayer.TransferMoney(Me.Owner, Me.Cost)
+        Me._owner = pPlayer
+        Me.GameBoard.onChangeOwner(Me, pPlayer)
+    End Sub
+
+    Friend Overrides Function onMoveOn(pPlayer As Player) As PlayerActionResult
+        Dim erg = MyBase.onMoveOn(pPlayer)
+        If Me.Owner.Equals(Player.BANK) Then
+            Return pPlayer.onDelegateControl(New ePlayerAction() {ePlayerAction.BuyStreet, ePlayerAction.Pass}, New Field() {Me}, ePlayerAction.Pass)
+        ElseIf Me.Owner.Equals(pPlayer) Then
+
         Else
-            ' Eigenes Feld
+            pPlayer.onPayRent(Me)
         End If
-    End Sub
+    End Function
 
-    Public Event FieldSold(pField As GameField, pPlayer As Player, e As EventArgs)
-	
+    Friend Overridable Sub ChangeOwner(pPlayer As Player)
+        Me._owner = pPlayer
+    End Sub
 End Class

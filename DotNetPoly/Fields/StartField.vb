@@ -1,31 +1,23 @@
-﻿'
-' Created by SharpDevelop.
-' User: serpe
-' Date: 22.11.2015
-' Time: 12:19
-' 
-' To change this template use Tools | Options | Coding | Edit Standard Headers.
-'
-Public Class StartField
-	Inherits GameField
-	
-	Sub New()
-		MyBase.new("Start")
-	End Sub
+﻿Imports DotNetPoly
 
-    Public Const GIVECASHBASE As UInteger = 10
+Public Class Startfield
+    Inherits Field
 
-    Overrides Sub MoveOver(pPlayer As Player)
-        MyBase.MoveOver(pPlayer)
-        GameBoard.BANK.MoneyTransferTo(pPlayer, GIVECASHBASE)
-        Console.WriteLine("Spieler {0} erhält {1}", pPlayer.Name, GIVECASHBASE)
+    Sub New(pStartMoney As Integer)
+        MyBase.New("Start")
+        _StartCash = pStartMoney
     End Sub
-	
-	Public Overrides Sub MoveOn(pPlayer As Player)
-		MyBase.MoveOn(pPlayer)
-        GameBoard.BANK.MoneyTransferTo(pPlayer, GIVECASHBASE * 2)
-        Console.WriteLine("Spieler {0} erhält {1}", pPlayer.Name, GIVECASHBASE * 2)
+
+    Public ReadOnly Property StartCash As Integer
+
+    Friend Overrides Function onMoveOn(pPlayer As Player) As PlayerActionResult
+        Dim erg = MyBase.onMoveOn(pPlayer)
+        Player.BANK.TransferMoney(pPlayer, StartCash * 2)
+        Return erg
+    End Function
+
+    Friend Overrides Sub onMoveOver(pPlayer As Player)
+        MyBase.onMoveOver(pPlayer)
+        Player.BANK.TransferMoney(pPlayer, StartCash)
     End Sub
-	
-	
 End Class

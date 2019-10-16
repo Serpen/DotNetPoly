@@ -1,125 +1,110 @@
 ﻿Public Class GameBoard
-
-    Const DICESEYES As Byte = 6
-    Const DICECOUNT As Byte = 1
-
-    Const INITIALCASH As UInteger = 100
-
-    Private DiceRandomizer As New Random
-
-    Public ReadOnly BANK As New Player("Bank", ePlayerType.System)
-
-    Sub New(pPlayers As Player(), pFields As GameField())
-        BANK._gameboard = Me
-
-        _players = pPlayers
-        For Each p In pPlayers
-            p._gameboard = Me
-
-            BANK.MoneyTransferTo(p, INITIALCASH)
-        Next
-
-        _fields = pFields
-        For Each f As GameField In pFields
-            f.GameBoard = Me
-        Next
-
-        Me.GameStats = New GameStatistics(Me)
-
-        _activePlayerIndex = 0
-        Me.Players(0)._active = True
+    Sub New(pPlayers() As Player, pFields() As Field, pSettings As Settings)
+        PlayerRank = pPlayers
+        Fields = pFields
+        Settings = pSettings
     End Sub
 
-    Private _activePlayerIndex As Integer
-    Private Property ActivePlayerIndex As Integer
-        Get
-            Return _activePlayerIndex
-        End Get
-        Set(value As Integer)
-            Me.Players(_activePlayerIndex)._active = False
-            _activePlayerIndex = value
-            Me.Players(_activePlayerIndex)._active = True
-        End Set
-    End Property
+    ReadOnly Property Fields As Field()
+    ReadOnly Property Settings As Settings
 
-    Public ReadOnly Property ActivePlayer As Player
+    Public ReadOnly Property PlayerRank As Player()
+
+    Private _activePlayer As Integer = -1
+    ReadOnly Property ActivePlayer As Player
         Get
-            Return Players(ActivePlayerIndex)
+            Return PlayerRank(_activePlayer)
         End Get
     End Property
 
-    Private ReadOnly _fields As GameField()
-    Public ReadOnly Property Fields As GameField()
+    ReadOnly Property IsGameOver As Boolean
         Get
-            Return _fields
+            Return checkGameOver()
         End Get
     End Property
 
-    Private ReadOnly _players As Player()
-    Public ReadOnly Property Players As Player()
-        Get
-            Return _players
-        End Get
-    End Property
-
-    Shared Function CreateSampleBoard() As GameBoard
-        Dim players1 As Player() = {New Player("Marco", ePlayerType.AI),
-                                    New Player("Malte", ePlayerType.AI)} ',
-        'New Player("Bot", ePlayerType.AI)}
-        Dim fields1 As GameField() = {New StartField(),
-            New StreetField("Karstadt", 100, 20),
-            New StreetField("Sky", 80, 10),
-            New StreetField("Edeka", 100, 15),
-            New StreetField("Penny", 20, 6),
-            New StreetField("Aldi", 25, 8),
-            New StreetField("H&M", 110, 40),
-            New StreetField("DOC", 200, 60)}
-        Dim gb As New GameBoard(players1, fields1)
-
-        Return gb
+    Friend Function checkGameOver() As Boolean
+        Dim activePlayersCount As Integer
+        Dim lastActivePlayer As Integer
+        For i As Integer = 0 To PlayerRank.GetLength(0) - 1
+            If PlayerRank(i).Status < ePlayerStatus.Bankrupt Then
+                activePlayersCount += 1
+                lastActivePlayer = i
+            End If
+        Next 'i
+        If activePlayersCount < 2 Then
+            _activePlayer = lastActivePlayer
+            RaiseEvent GameOver()
+            Return True
+        Else
+            Return False
+        End If
     End Function
 
-    Public Function RollDice() As Integer()
-        Me.GameStats.TotalDices += CUInt(1)
-        Dim dices(DICECOUNT) As Integer
-        
-        For i = 0 To DICECOUNT
-        	dices(i)=DiceRandomizer.Next(1, DICESEYES)
+
+    Sub Initialize()
+        Dim sortedList As New Collections.SortedList()
+        Dim sortkey As Integer
+
+        For Each p In PlayerRank
+            Player.BANK.TransferMoney(p, Settings.START_CAPITAL)
+            p.Status = ePlayerStatus.Active
+            p.GameBoard = Me
+            p.Position = 0
         Next
-        
-        Return dices
 
-    End Function
+        For Each p In PlayerRank
+            Dim result = p.onDelegateControl(New ePlayerAction() {ePlayerAction.DiceOnly}, Nothing, ePlayerAction.DiceOnly)
+            sortkey = CType(result.Result, DiceRollResult).DiceSum * 10
+            While sortedList.ContainsKey(-sortkey)
+                sortkey += 1
+            End While
+            sortedList.Add(-sortkey, p) 'negativ für Sortierung
+        Next
 
-    Sub setNextPlayer()
-        Dim last = ActivePlayerIndex
+        sortedList.Values.CopyTo(PlayerRank, 0)
 
+        onPlayerRankChanged()
+
+        For Each f In Fields
+            f._gameboard = Me
+            f.Initialize()
+        Next
+    End Sub
+
+    Sub onChangeOwner(pField As StreetField, pPlayer As Player)
+        pField.ChangeOwner(pPlayer)
+        RaiseEvent FieldOwnerChange(pField, pPlayer)
+    End Sub
+
+    Sub performPlayerAction()
         Do
-            ActivePlayerIndex = (ActivePlayerIndex + 1) Mod (_players.GetLength(0))
-        Loop While ActivePlayer.isBankrupt
-        If ActivePlayerIndex = last Then
-            _gameover = True
-        End If
+            _activePlayer = (_activePlayer + 1) Mod (PlayerRank.GetLength(0))
+        Loop Until ActivePlayer.Status = ePlayerStatus.Waiting
+
+        ActivePlayer.Status = ePlayerStatus.Active
+
+        Do While ActivePlayer.Status = ePlayerStatus.Active
+            If Not IsGameOver Then
+                ActivePlayer.onDelegateControl(New ePlayerAction() {ePlayerAction.Move}, Nothing, ePlayerAction.Move)
+            End If
+        Loop
+
     End Sub
 
-    Function checkGameOver() As Boolean
-        'TODO: Dirty
-        Dim pleiteCount As Integer
-        For Each p In _players
-            If p.isBankrupt Then pleiteCount += 1
-        Next
-        If pleiteCount = _players.GetLength(0) - 1 Then
-            Me._gameover = True
-            setNextPlayer()
-        End If
-        Return _gameover
-    End Function
+    Public Sub onFieldOwnerChange(pField As StreetField, pOwner As Player)
+        RaiseEvent FieldOwnerChange(pField, pOwner)
+    End Sub
 
-    Private _gameover As Boolean
-    Public ReadOnly Property GameOver As Boolean
-        Get
-            Return _gameover
-        End Get
-    End Property
+    Sub onPlayerRankChanged()
+        RaiseEvent PlayerRankChanged(PlayerRank)
+    End Sub
+
+    Event GameOver()
+
+    Event FieldOwnerChange(pField As StreetField, pOwner As Player)
+
+    Event PlayerRankChanged(pPlayerRank As Player())
+
 
 End Class

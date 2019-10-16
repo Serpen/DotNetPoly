@@ -45,6 +45,9 @@
     <Optimize>True</Optimize>
     <DefineConstants>TRACE=1</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>DotNetPolyConsole.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -54,15 +57,24 @@
   <ItemGroup>
     <Compile Include="Program.vb" />
     <Compile Include="Properties\AssemblyInfo.vb" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DotNetPoly\DotNetPoly.vbproj">
-      <Project>{830640AC-B3E0-41CF-A20B-6E2A27B8D08F}</Project>
-      <Name>DotNetPoly</Name>
-    </ProjectReference>
+    <None Include="MonopolyJunior.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SampleFields.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Settings.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Import Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetPoly\DotNetPoly.vbproj">
+      <Project>{830640ac-b3e0-41cf-a20b-6e2a27b8d08f}</Project>
+      <Name>DotNetPoly</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
