@@ -101,9 +101,9 @@ Public MustInherit Class BasePlayer
     Friend Function onRollDice() As DiceRollResult
         Dim diceRoll As New DiceRollResult(GameBoard.Settings.DICE_COUNT, GameBoard.Settings.DICE_EYES)
 
-        GameBoard.Statistic.TotalDiceCount += 1
-        GameBoard.Statistic.DiceRollSums(diceRoll.DiceSum) += 1
-        If diceRoll.IsDoubles Then GameBoard.Statistic.DoublesCount += 1
+        GameBoard.Statistics.TotalDiceCount += 1
+        GameBoard.Statistics.DiceRollSums(diceRoll.DiceSum) += 1
+        If diceRoll.IsDoubles Then GameBoard.Statistics.DoublesCount += 1
 
         RaiseEvent RollDice(Me, diceRoll)
 
@@ -142,7 +142,7 @@ Public MustInherit Class BasePlayer
     MustOverride Sub SubmitChoosenAction(pIndex As Integer, pObject As Object)
 
     Protected Sub invokeAction(pChoosenAction As eActionType, pfields() As BaseField, pPlayers() As Entity, pCash As Integer)
-        GameBoard.Statistic.ActionChoosen(pChoosenAction) = CInt(GameBoard.Statistic.ActionChoosen(pChoosenAction)) + 1
+        GameBoard.Statistics.ActionChoosen(pChoosenAction) = CInt(GameBoard.Statistics.ActionChoosen(pChoosenAction)) + 1
 
         Select Case pChoosenAction
             Case eActionType.Move
@@ -193,12 +193,18 @@ Public MustInherit Class BasePlayer
 
             Case eActionType.CardUseFreeParking
                 RaiseChance(eActionType.CardUseFreeParking, New Object() {pfields(0)})
-                GameBoard.FreeParkingOwner = GameBoard.BANK
+                If Not CheatAlwaysRentFree Then
+                    GameBoard.FreeParkingOwner = GameBoard.BANK
+                End If
+
             Case eActionType.CardGetFreeParking
                 GameBoard.FreeParkingOwner = Me
             Case eActionType.CardUseFreeJail
                 RaiseChance(eActionType.CardUseFreeJail, New Object() {GameBoard.JailField})
-                GameBoard.FreeParkingOwner = GameBoard.BANK
+                If Not CheatAlwaysJailFree Then
+                    GameBoard.FreeParkingOwner = GameBoard.BANK
+                End If
+
             Case eActionType.CardGetFreeJail
                 GameBoard.FreeJailOwner = Me
             Case eActionType.Pass
@@ -231,7 +237,7 @@ Public MustInherit Class BasePlayer
             _Position = (_Position + 1) Mod GameBoard.FieldCount
             PositionField.onMoveOn(Me)
 
-            If Me.IsPlayering AndAlso diceRoll.IsDoubles AndAlso Me.Position <> GameBoard.JailField.Index Then
+            If Me.IsPlayering AndAlso (diceRoll.IsDoubles) AndAlso Me.Position <> GameBoard.JailField.Index Then
                 'Doubles Limit no reached, so add another move
                 NextAction.Enqueue(eActionType.Move)
                 'TODO: AddMove needs own event
@@ -300,6 +306,17 @@ Public MustInherit Class BasePlayer
     Event DoublesToMuch(pPlayer As BasePlayer)
 
     Event UpgradeHouse(pPlayer As BasePlayer, pHouse As HouseField)
+
+#End Region
+
+#Region "Cheats"
+
+    Public CheatAlwaysJailFree As Boolean = False
+    Public CheatAlwaysRentFree As Boolean = False
+    Public CheatMoneyFactor As Integer = 1
+    'Public CheatAlwaysMaxAllowedDoubles As Boolean = False
+
+
 
 #End Region
 

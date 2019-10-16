@@ -32,12 +32,12 @@ Namespace Fields
 
         Friend Overridable Sub onMoveOver(pPlayer As BasePlayer)
             pPlayer.RaiseMoveOver(Me)
-            GameBoard.Statistic.FieldHovers(Me.Index) += 1
+            GameBoard.Statistics.FieldHovers(Me.Index) += 1
         End Sub
 
         Friend Overridable Sub onMoveOn(pPlayer As BasePlayer)
             pPlayer.RaiseMoveOn(Me)
-            GameBoard.Statistic.FieldVisits(Me.Index) += 1
+            GameBoard.Statistics.FieldVisits(Me.Index) += 1
         End Sub
 
         Public ReadOnly Property Index As Integer

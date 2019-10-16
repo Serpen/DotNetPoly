@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiceRollResult.vb" />
+    <Compile Include="Exceptions.vb" />
     <Compile Include="Fields\ChanceField.vb" />
     <Compile Include="Fields\BaseField.vb" />
     <Compile Include="Fields\FieldCollection.vb" />

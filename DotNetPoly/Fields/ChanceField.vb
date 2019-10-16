@@ -170,13 +170,13 @@
                     Dim houseindex As Integer
                     Dim housecounter, fieldcounter As Integer
 
-                    If GameBoard.Statistic.AvailableHouseFields > 0 Then
-                        houseindex = ChanceRandomizer.Next(0, GameBoard.Statistic.AvailableHouseFields - 1)
+                    If GameBoard.Statistics.AvailableHouseFields > 0 Then
+                        houseindex = ChanceRandomizer.Next(0, GameBoard.Statistics.AvailableHouseFields - 1)
                         Do
                             If GameBoard.HouseFields(fieldcounter).Owner.Equals(GameBoard.BANK) Then
                                 If housecounter = houseindex Then
-                                    pPlayer.RaiseChance(choosenChance, New Object() {GameBoard.HouseFields(housecounter)})
-                                    pPlayer.onDelegateControl(eActionType.BuyHouse, GameBoard.HouseFields(housecounter))
+                                    pPlayer.RaiseChance(choosenChance, New Object() {GameBoard.HouseFields(fieldcounter)})
+                                    pPlayer.onDelegateControl(eActionType.BuyHouse, GameBoard.HouseFields(fieldcounter))
                                 End If
                                 housecounter += 1
                             End If
@@ -191,8 +191,8 @@
                     Dim fieldcounter As Integer = 0
                     Dim posActions As eActionType()
 
-                    If GameBoard.Statistic.SoldHouseFields > 0 Then
-                        houseindex = ChanceRandomizer.Next(0, GameBoard.Statistic.SoldHouseFields - 1)
+                    If GameBoard.Statistics.SoldHouseFields > 0 Then
+                        houseindex = ChanceRandomizer.Next(0, GameBoard.Statistics.SoldHouseFields - 1)
                         If GameBoard.FreeParkingOwner.Equals(pPlayer) Then
                             ReDim posActions(1)
                             posActions(0) = choosenChance
@@ -231,7 +231,7 @@
 
             End Select
 
-            GameBoard.Statistic.ChanceOccured(choosenChance) = CInt(GameBoard.Statistic.ChanceOccured(choosenChance)) + 1
+            GameBoard.Statistics.ChanceOccured(choosenChance) = CInt(GameBoard.Statistics.ChanceOccured(choosenChance)) + 1
         End Sub
     End Class
 

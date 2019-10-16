@@ -25,13 +25,13 @@ Public Class HumanPlayer
         allPossibilities.Add(eActionType.GiveUp)
 
         If allPossibilities.Contains(eActionType.PayRent) Then
-            If GameBoard.FreeParkingOwner.Equals(Me) Then
+            If CheatAlwaysRentFree OrElse GameBoard.FreeParkingOwner.Equals(Me) Then
                 allPossibilities.Add(eActionType.CardUseFreeParking)
             End If
         End If
 
         If allPossibilities.Contains(eActionType.JumpToJail) Then
-            If GameBoard.FreeJailOwner.Equals(Me) Then
+            If CheatAlwaysJailFree OrElse GameBoard.FreeJailOwner.Equals(Me) Then
                 allPossibilities.Add(eActionType.CardUseFreeJail)
             End If
         End If

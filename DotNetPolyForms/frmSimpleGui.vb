@@ -195,6 +195,15 @@ Public Class frmSimpleGui
             pcounter += 1
         Next
 
+        'Try
+        Dim img As Image = Image.FromFile(Environment.ExpandEnvironmentVariables("%OneDrive%\VS_Projects\DotNetPoly\PICS\Background.png"))
+        Dim g As Graphics = Me.SplitContainer1.Panel1.CreateGraphics
+        Dim r As New Rectangle(fieldsize.Width, fieldsize.Height, (fieldsPerSide - 2) * fieldsize.Width, (fieldsPerSide - 2) * fieldsize.Height)
+        g.DrawImage(img, r)
+        'Catch ex As Exception
+
+        ' End Try
+
     End Sub
 
     Sub SetPlayerLocation(pField As Integer, pPlayer As BasePlayer)

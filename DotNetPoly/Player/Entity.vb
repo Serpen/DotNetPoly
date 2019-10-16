@@ -20,6 +20,13 @@ Public Class Entity
     Friend Sub TransferMoney(pToEntity As Entity, pAmount As Integer)
         Dim transfer As Integer
 
+        If pToEntity.GetType() Is GetType(BasePlayer) Then
+            pAmount *= DirectCast(pToEntity, BasePlayer).CheatMoneyFactor
+        End If
+        If Me.GetType() Is GetType(BasePlayer) Then
+            pAmount = CInt(pAmount / DirectCast(Me, BasePlayer).CheatMoneyFactor)
+        End If
+
         If pAmount > 0 Then
             If Me.GetType() Is GetType(Entity) Then
                 'If Me.Equals(GameBoard.BANK) Then

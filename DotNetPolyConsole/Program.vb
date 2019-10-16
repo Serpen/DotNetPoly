@@ -52,7 +52,7 @@ Module Program
         Console.ReadKey(True)
     End Sub
 
-    Private Sub WriteLineInPlayerColor(pLine As String, pPlayer As BasePlayer, ParamArray format As Object())
+    Private Sub WriteLineInPlayerColor(pLine As String, pPlayer As Entity, ParamArray format As Object())
         Dim preColor = Console.ForegroundColor
         Console.ForegroundColor = ColorConverter.ClosestConsoleColor(pPlayer.Color)
         If Console.BackgroundColor = Console.ForegroundColor Then Console.ForegroundColor = preColor
@@ -152,7 +152,7 @@ Module Program
         WriteLineInPlayerColor("Spieler {0} baut {1} aus", pPlayer, pPlayer, pHouse)
     End Sub
 
-    Private Sub FieldOwnerChange(pField As HouseField, pOwner As BasePlayer) Handles gb.FieldOwnerChange
+    Private Sub FieldOwnerChange(pField As HouseField, pOwner As Entity) Handles gb.FieldOwnerChange
         WriteLineInPlayerColor("Spieler {0} kauft {1}", pOwner, pOwner, pField)
     End Sub
 End Module

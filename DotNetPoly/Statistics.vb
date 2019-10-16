@@ -1,8 +1,8 @@
 ﻿Partial Class GameBoard
 
-    Friend Statistic As Statistics
+    Friend Statistics As GameBoard.StatisticsClass
 
-    Friend Class Statistics
+    Friend Class StatisticsClass
         Private _Gameboard As GameBoard
 
         Sub New(pGameboard As GameBoard)
@@ -53,6 +53,8 @@
         End Property
         Friend Property SoldHouseFields As Integer
 
+        Friend CompleteGroups As Integer
+
         Friend FieldVisits() As Integer
         Friend FieldHovers() As Integer
 
@@ -72,6 +74,12 @@
                 Return DateTime.Now - StartTime
             End Get
         End Property
+
+        Friend MaxUpgradeLevel As Integer
+        Friend MaxRent As Integer
+        Friend MaxCost As Integer
+
+        Friend Lap As Integer
 
 
     End Class

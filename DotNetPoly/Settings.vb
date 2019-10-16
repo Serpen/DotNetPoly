@@ -11,6 +11,9 @@ Public Class Settings
         [Enum].TryParse(pxmlnode.SelectSingleNode("settings/jailaction").InnerText, JAIL_ACTION)
         Integer.TryParse(pxmlnode.SelectSingleNode("settings/jailaction").Attributes("times").InnerText, JAIL_TIMES)
 
+        [Enum].TryParse(pxmlnode.SelectSingleNode("settings/upgrade/upgrade").InnerText, CostUpgradeMethode)
+        [Enum].TryParse(pxmlnode.SelectSingleNode("settings/upgrade/rent").InnerText, RentUpgradeMethode)
+
         ReDim Chances(pxmlnode.SelectSingleNode("chances").ChildNodes.Count - 1)
 
         Dim nodeList = pxmlnode.SelectNodes("chances/*")
@@ -26,6 +29,10 @@ Public Class Settings
     Public ReadOnly Property END_TURN_EVENT As Boolean = False
     Public ReadOnly Property JAIL_ACTION As eActionType = eActionType.LoseTurn
     Public ReadOnly Property JAIL_TIMES As Integer = 1
+
+    Public ReadOnly Property UpgradePreReq As Fields.HouseField.eUpgradeAlgorithm
+    Public ReadOnly Property CostUpgradeMethode As Fields.HouseField.eUpgradeAlgorithm
+    Public ReadOnly Property RentUpgradeMethode As Fields.HouseField.eUpgradeAlgorithm
 
     ReadOnly Property Chances As eActionType()
 

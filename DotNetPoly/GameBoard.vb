@@ -17,6 +17,9 @@ Public Class GameBoard
 
         Dim fileVersion As New Version("0.0")
 
+#If DEBUG = 0 Then
+        Try
+#End If
         xmlfile.Load(System.Environment.ExpandEnvironmentVariables(pGameBoardFile))
 
 
@@ -24,7 +27,7 @@ Public Class GameBoard
             fileVersion = New Version("0.0")
         End If
 
-        If fileVersion.Minor < 5 Then
+        If fileVersion.Minor < 6 Then
             Throw New NotSupportedException("Gameboard Version to low")
         End If
 
@@ -42,9 +45,7 @@ Public Class GameBoard
                     FieldCol.Add(contextName, New Fields.Startfield(contextCash, contextName))
                 Case "house"
 
-                    Integer.TryParse(xmlfield.Attributes.GetNamedItem("cost")?.InnerText, contextCash)
-
-                    FieldCol.Add(contextName, New Fields.HouseField(contextName, contextCash))
+                    FieldCol.Add(contextName, New Fields.HouseField(xmlfield, Settings))
                 Case "chance"
                     If Not [Enum].TryParse(Of eActionType)(xmlfield.Attributes.GetNamedItem("action")?.InnerText, contextAction) Then
                         Diagnostics.Debug.WriteLine($"field {contextName} has unknown action {xmlfield.Attributes.GetNamedItem("action")?.InnerText}")
@@ -64,8 +65,14 @@ Public Class GameBoard
             End Select
         Next
 
+#If DEBUG = 0 Then
+        Catch ex As Exception
+            Throw New DotNetPolyException("Error loading gameboard")
+        End Try
+#End If
+
         PlayerRank = pPlayers
-        Statistic = New Statistics(Me)
+        Statistics = New StatisticsClass(Me)
     End Sub
 
     Private Property FieldCol As New FieldCollection
@@ -82,6 +89,7 @@ Public Class GameBoard
 
     Public ReadOnly Property JailField As JailField
 
+    Friend ReadOnly Property Groups As Collections.Generic.List(Of HouseField)()
     Friend ReadOnly Property _Housefields As New FieldCollection
     Public ReadOnly Property HouseFields(index As Integer) As HouseField
         Get
@@ -129,9 +137,12 @@ Public Class GameBoard
 
 
     Sub Initialize()
-        Dim sortedList As New Collections.SortedList()
-        Dim sortkey As Integer
+        Dim playerRankSort As New Collections.SortedList()
+        Dim playerSortKey As Integer
+
         Dim housfieldcounter As Integer
+
+        Dim grps As New Collections.Generic.Dictionary(Of Integer, Collections.Generic.List(Of HouseField))
 
         For i = 0 To FieldCol.Count - 1
             Fields(i).Initialize(Me, i)
@@ -139,10 +150,21 @@ Public Class GameBoard
                 Case GetType(JailField)
                     _JailField = DirectCast(Fields(i), JailField)
                 Case GetType(HouseField)
-                    _Housefields.Add((DirectCast(Fields(i), HouseField)).ToString(), (DirectCast(Fields(i), HouseField)))
+                    Dim hf As HouseField = DirectCast(Fields(i), HouseField)
+                    _Housefields.Add(hf.ToString(), hf)
                     housfieldcounter += 1
+                    If Not grps.ContainsKey(hf.Group) Then
+                        grps.Add(hf.Group, New Collections.Generic.List(Of HouseField))
+                    End If
+                    grps(hf.Group).Add(hf)
                 Case Else
             End Select
+        Next
+
+        ReDim _Groups(grps.Count - 1)
+
+        For Each itm In grps
+            _Groups(itm.Key) = itm.Value
         Next
 
         'Initialize without rank
@@ -155,19 +177,19 @@ Public Class GameBoard
             _activePlayer = p.Index
             RaiseEvent NextPlayer(ActivePlayer)
             Dim result = p.DelegateDiceRoll()
-            sortkey = result.DiceSum * 10
-            While sortedList.ContainsKey(-sortkey)
-                sortkey += 1
+            playerSortKey = result.DiceSum * 10
+            While playerRankSort.ContainsKey(-playerSortKey)
+                playerSortKey += 1
             End While
-            sortedList.Add(-sortkey, p) 'negativ for sorting
+            playerRankSort.Add(-playerSortKey, p) 'negativ for sorting
         Next
 
 
-        sortedList.Values.CopyTo(PlayerRank, 0)
+        playerRankSort.Values.CopyTo(PlayerRank, 0)
 
         'Initialize Part 2 with rank
         For i = 0 To PlayerRank.Length - 1
-            PlayerRank(i).Index=i
+            PlayerRank(i).Index = i
         Next
 
         _activePlayer = -1
@@ -185,6 +207,8 @@ Public Class GameBoard
         Do
             _activePlayer = (_activePlayer + 1) Mod (PlayerRank.GetLength(0))
         Loop Until ActivePlayer.IsPlayering AndAlso ActivePlayer.NextAction.Peek() = eActionType.WaitingForTurn
+
+        If _activePlayer = 0 Then Me.Statistics.Lap += 1
 
         RaiseEvent NextPlayer(ActivePlayer)
 
@@ -219,7 +243,7 @@ Public Class GameBoard
 
     End Sub
 
-    Sub RaiseChangeOwner(pField As HouseField, pPlayer As BasePlayer)
+    Sub RaiseChangeOwner(pField As HouseField, pPlayer As Entity)
         RaiseEvent FieldOwnerChange(pField, pPlayer)
     End Sub
 
@@ -229,7 +253,7 @@ Public Class GameBoard
 
     Event GameOver()
 
-    Event FieldOwnerChange(pField As HouseField, pOwner As BasePlayer)
+    Event FieldOwnerChange(pField As HouseField, pOwner As Entity)
 
     Event PlayerRankChanged(pPlayerRank As BasePlayer())
 
