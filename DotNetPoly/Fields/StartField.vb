@@ -1,23 +1,24 @@
-﻿Imports DotNetPoly
+﻿Namespace Fields
 
-Public Class Startfield
-    Inherits Field
+    Public Class Startfield
+        Inherits BaseField
 
-    Sub New(pStartMoney As Integer)
-        MyBase.New("Start")
-        _StartCash = pStartMoney
-    End Sub
+        Sub New(pStartMoney As Integer, pName As String)
+            MyBase.New(pName)
+            _StartCash = pStartMoney
+        End Sub
 
-    Public ReadOnly Property StartCash As Integer
+        Public ReadOnly Property StartCash As Integer
 
-    Friend Overrides Function onMoveOn(pPlayer As Player) As PlayerActionResult
-        Dim erg = MyBase.onMoveOn(pPlayer)
-        Player.BANK.TransferMoney(pPlayer, StartCash * 2)
-        Return erg
-    End Function
+        Friend Overrides Sub onMoveOn(pPlayer As BasePlayer)
+            MyBase.onMoveOn(pPlayer)
+            GameBoard.BANK.TransferMoney(pPlayer, StartCash * 2)
+        End Sub
 
-    Friend Overrides Sub onMoveOver(pPlayer As Player)
-        MyBase.onMoveOver(pPlayer)
-        Player.BANK.TransferMoney(pPlayer, StartCash)
-    End Sub
-End Class
+        Friend Overrides Sub onMoveOver(pPlayer As BasePlayer)
+            MyBase.onMoveOver(pPlayer)
+            GameBoard.BANK.TransferMoney(pPlayer, StartCash)
+        End Sub
+    End Class
+End Namespace
+

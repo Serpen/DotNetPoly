@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-# SharpDevelop 4.4
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetPoly", "DotNetPoly\DotNetPoly.vbproj", "{830640AC-B3E0-41CF-A20B-6E2A27B8D08F}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetPolyConsole", "DotNetPolyConsole\DotNetPolyConsole.vbproj", "{1ADD5B3F-99A7-41C1-99D8-E4508BA9535B}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DotNetPolyForms", "DotNetPolyForms\DotNetPolyForms.vbproj", "{30EFACEA-6623-49AB-941D-E772E322EB91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,10 +19,14 @@ Global
 		{830640AC-B3E0-41CF-A20B-6E2A27B8D08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{830640AC-B3E0-41CF-A20B-6E2A27B8D08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{830640AC-B3E0-41CF-A20B-6E2A27B8D08F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1ADD5B3F-99A7-41C1-99D8-E4508BA9535B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ADD5B3F-99A7-41C1-99D8-E4508BA9535B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1ADD5B3F-99A7-41C1-99D8-E4508BA9535B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADD5B3F-99A7-41C1-99D8-E4508BA9535B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ADD5B3F-99A7-41C1-99D8-E4508BA9535B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADD5B3F-99A7-41C1-99D8-E4508BA9535B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30EFACEA-6623-49AB-941D-E772E322EB91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30EFACEA-6623-49AB-941D-E772E322EB91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30EFACEA-6623-49AB-941D-E772E322EB91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30EFACEA-6623-49AB-941D-E772E322EB91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,7 +13,7 @@ Imports System.Runtime.InteropServices
 <assembly: AssemblyConfiguration("")>
 <assembly: AssemblyCompany("")>
 <assembly: AssemblyProduct("DotNetPoly")>
-<Assembly: AssemblyCopyright("Copyright 2016")>
+<Assembly: AssemblyCopyright("Copyright 2017")>
 <assembly: AssemblyTrademark("")>
 <assembly: AssemblyCulture("")>
 
@@ -28,4 +28,4 @@ Imports System.Runtime.InteropServices
 ' You can specify all values by your own or you can build default build and revision
 ' numbers with the '*' character (the default):
 
-<Assembly: AssemblyVersion("0.1.*")>
+<Assembly: AssemblyVersion("0.4.*")>
